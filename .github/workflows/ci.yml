@@ -1,10 +1,7 @@
-name: .NET CI
+name: .NET CI-CD
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -30,3 +27,12 @@ jobs:
 
       - name: Test
         run: dotnet test --no-build --configuration Release
+
+      - name: Publish application
+        run: dotnet publish --configuration Release --output ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DevOpsDemo-app
+          path: ./publish
