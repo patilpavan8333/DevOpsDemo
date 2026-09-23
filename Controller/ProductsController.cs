@@ -3,7 +3,7 @@ using DevOpsDemo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevOpsDemo.Controllers;
+namespace DevOpsDemo.Controller;
 
 [ApiController]
 [Route("api/[controller]")]
