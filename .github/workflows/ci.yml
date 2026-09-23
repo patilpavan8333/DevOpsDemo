@@ -53,6 +53,11 @@ jobs:
         run: |
           scp -r ./publish/* "${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}:/var/www/devopsdemo/"
 
+      - name: Configure database connection
+        run: |
+          ssh "${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}" \
+          "echo 'ConnectionStrings__DefaultConnection=${{ secrets.DB_CONNECTION_STRING }}' | sudo tee /etc/devopsdemo/environment > /dev/null && sudo chmod 600 /etc/devopsdemo/environment"
+
       - name: Restart application
         run: |
           ssh "${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}" \
