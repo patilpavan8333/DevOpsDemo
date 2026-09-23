@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -36,3 +35,25 @@ jobs:
         with:
           name: DevOpsDemo-app
           path: ./publish
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: DevOpsDemo-app
+          path: ./publish
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.VM_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy to Azure VM
+        run: |
+          scp -r ./publish/* "${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}:/var/www/devopsdemo/"
+
+      - name: Restart application
+        run: |
+          ssh "${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}" \
+          "sudo systemctl restart devopsdemo && sudo systemctl status devopsdemo --no-pager"
